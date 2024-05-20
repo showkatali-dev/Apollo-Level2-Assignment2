@@ -1,44 +1,33 @@
 import { IProduct } from './product.interface';
 import Product from './product.model';
 
-export const createProductIntoDB = async (
-  data: IProduct,
-): Promise<IProduct> => {
+export const createProductIntoDB = async (data: IProduct) => {
   const product = new Product(data);
   await product.save();
   return product;
 };
 
-export const getProductsFromDB = async (): Promise<IProduct[]> => {
+export const getProductsFromDB = async () => {
   const products = await Product.find();
   return products;
 };
 
-export const getProductByIdFromDB = async (
-  id: string,
-): Promise<IProduct | null> => {
+export const getProductByIdFromDB = async (id: string) => {
   const product = await Product.findById(id);
   return product;
 };
 
-export const updateProductByIdIntoDB = async (
-  id: string,
-  data: IProduct,
-): Promise<IProduct | null> => {
+export const updateProductByIdIntoDB = async (id: string, data: IProduct) => {
   const product = await Product.findByIdAndUpdate(id, data);
   return product;
 };
 
-export const deleteProductByIdFromDB = async (
-  id: string,
-): Promise<IProduct | null> => {
+export const deleteProductByIdFromDB = async (id: string) => {
   const result = await Product.findByIdAndDelete(id);
   return result;
 };
 
-export const searchProductsIntoDB = async (
-  searchTerm: string,
-): Promise<IProduct[]> => {
+export const searchProductsIntoDB = async (searchTerm: string) => {
   const products = await Product.find({
     $text: {
       $search: searchTerm,

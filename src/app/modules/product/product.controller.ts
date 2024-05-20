@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from 'express';
 import {
   createProductIntoDB,
@@ -8,7 +7,6 @@ import {
   searchProductsIntoDB,
   updateProductByIdIntoDB,
 } from './product.service';
-import { IProduct } from './product.interface';
 
 export const createProduct = async (
   req: Request,
@@ -35,17 +33,20 @@ export const getAllProducts = async (
 ) => {
   try {
     const { searchTerm } = req.query;
-    let result: IProduct[] = [];
+    let result;
+    let message;
 
     if (searchTerm) {
       result = await searchProductsIntoDB(searchTerm as string);
+      message = `Products matching search term '${searchTerm}' fetched successfully!`;
     } else {
       result = await getProductsFromDB();
+      message = 'Products fetched successfully!';
     }
 
     res.send({
       success: true,
-      message: 'Products fetched successfully!',
+      message,
       data: result,
     });
   } catch (error) {
