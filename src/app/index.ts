@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import { productRoute } from './modules/product/product.route';
+import { globalErrorHandler, notFoundHandler } from './middlewares/error';
 
 const app = express();
 
@@ -15,11 +17,8 @@ app.get('/health', (_req, res) => {
   });
 });
 
-app.use((_req, res) => {
-  res.status(404).send({
-    success: false,
-    message: 'Route not found',
-  });
-});
+app.use('/api/products', productRoute);
+
+app.use([notFoundHandler, globalErrorHandler]);
 
 export default app;
