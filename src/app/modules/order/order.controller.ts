@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { createOrderIntoDB, getOrdersFromDB } from './order.service';
 import mongoose from 'mongoose';
+import {
+  getProductByIdFromDB,
+  updateProductByIdIntoDB,
+} from '../product/product.service';
 
 export const cerateOrder = async (
   req: Request,
@@ -10,8 +14,37 @@ export const cerateOrder = async (
   try {
     const req_data = req.body;
     const { productId: product_id } = req_data;
+
+    // check if the product exists
+    const product = await getProductByIdFromDB(product_id);
+    if (!product) {
+      const error = new Error();
+      error.name = 'not-found';
+      error.message = 'The product you are trying to order does not exist!';
+      throw error;
+    }
+
+    // check if the product is in stock
+    if (product.inventory.inStock === false) {
+      const error = new Error();
+      error.name = 'not-found';
+      error.message = 'The product you are trying to order is out of stock!';
+      throw error;
+    }
+
+    // create order
     const productId = new mongoose.Types.ObjectId(product_id as string);
     const result = await createOrderIntoDB({ ...req_data, productId });
+
+    // update product inventory after create an order
+    await updateProductByIdIntoDB(product_id, {
+      ...product,
+      inventory: {
+        quantity: product.inventory.quantity - 1,
+        inStock: product.inventory.quantity > 1 ? true : false,
+      },
+    });
+
     res.send({
       success: true,
       message: 'Order created successfully!',
