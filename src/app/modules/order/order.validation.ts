@@ -17,8 +17,15 @@ export const orderValidationSchema = z.object({
     required_error: 'The price is required',
     invalid_type_error: 'The price must be a number',
   }),
-  quantity: z.number({
-    required_error: 'The quantity is required',
-    invalid_type_error: 'The quantity must be a number',
-  }),
+  quantity: z
+    .number({
+      required_error: 'The quantity is required',
+      invalid_type_error: 'The quantity must be a number',
+    })
+    .int({
+      message: 'The quantity must be an integer',
+    })
+    .gte(1, {
+      message: 'The minimum quantity is 1',
+    }),
 });
