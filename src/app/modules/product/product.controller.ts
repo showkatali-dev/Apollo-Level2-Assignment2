@@ -7,6 +7,7 @@ import {
   updateProductByIdIntoDB,
 } from './product.service';
 import { productValidationSchema } from './product.validation';
+import { IProduct } from './product.interface';
 
 export const createProduct = async (
   req: Request,
@@ -15,7 +16,11 @@ export const createProduct = async (
 ) => {
   try {
     const req_data = req.body;
+
+    // product validation by zod
     const zodParsedData = productValidationSchema.parse(req_data);
+
+    // create product
     const result = await createProductIntoDB(zodParsedData);
     res.send({
       success: true,
@@ -64,6 +69,7 @@ export const getProductById = async (
 ) => {
   try {
     const { productId } = req.params;
+
     const result = await getProductByIdFromDB(productId);
 
     if (!result) {
@@ -90,9 +96,11 @@ export const updateProductById = async (
 ) => {
   try {
     const { productId } = req.params;
-    const req_data = req.body;
+    const req_data: IProduct = req.body;
 
-    const result = await updateProductByIdIntoDB(productId, req_data);
+    const zodParsedData = productValidationSchema.parse(req_data);
+
+    const result = await updateProductByIdIntoDB(productId, zodParsedData);
 
     if (!result) {
       const error = new Error();

@@ -31,8 +31,13 @@ export const cerateOrder = async (
     // check if the product is in stock
     if (product.inventory.inStock === false) {
       const error = new Error();
-      error.name = 'not-found';
-      error.message = 'The product you are trying to order is out of stock!';
+      error.message = 'Insufficient quantity available in inventory!';
+      throw error;
+    }
+
+    if (zodParsedData.quantity > product.inventory.quantity) {
+      const error = new Error();
+      error.message = `Insufficient quantity available in inventory! Only ${product.inventory.quantity} products available.`;
       throw error;
     }
 
@@ -44,8 +49,9 @@ export const cerateOrder = async (
     await updateProductByIdIntoDB(product_id, {
       ...product,
       inventory: {
-        quantity: product.inventory.quantity - 1,
-        inStock: product.inventory.quantity > 1 ? true : false,
+        quantity: product.inventory.quantity - zodParsedData.quantity,
+        inStock:
+          product.inventory.quantity > zodParsedData.quantity ? true : false,
       },
     });
 
