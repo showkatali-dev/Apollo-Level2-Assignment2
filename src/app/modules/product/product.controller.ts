@@ -6,6 +6,7 @@ import {
   getProductsFromDB,
   updateProductByIdIntoDB,
 } from './product.service';
+import { productValidationSchema } from './product.validation';
 
 export const createProduct = async (
   req: Request,
@@ -14,7 +15,8 @@ export const createProduct = async (
 ) => {
   try {
     const req_data = req.body;
-    const result = await createProductIntoDB(req_data);
+    const zodParsedData = productValidationSchema.parse(req_data);
+    const result = await createProductIntoDB(zodParsedData);
     res.send({
       success: true,
       message: 'Product created successfully!',
