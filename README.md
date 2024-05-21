@@ -29,16 +29,15 @@ To run the application locally, follow these steps:
 
 #### 1. Clone this repository to your local machine:
 
-````
+```shell
 git clone https://github.com/showkatali-dev/Apollo-Level2-Assignment2
-
-``` shell
+```
 
 #### 2. Navigate to the project directory:
 
-``` shell
+```shell
 cd Apollo-Level2-Assignment2
-````
+```
 
 #### 3. Install dependencies:
 
