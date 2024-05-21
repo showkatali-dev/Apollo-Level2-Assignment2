@@ -7,12 +7,11 @@ export const createOrderIntoDB = async (data: IOrder) => {
   return order;
 };
 
-export const getOrdersFromDB = async () => {
+export const getOrdersFromDB = async (email: string | undefined) => {
+  if (email) {
+    const orders = await Order.find({ email });
+    return orders;
+  }
   const orders = await Order.find();
-  return orders;
-};
-
-export const getOrdersByEmailFromDB = async (email: string) => {
-  const orders = await Order.find({ email });
   return orders;
 };

@@ -4,7 +4,6 @@ import {
   deleteProductByIdFromDB,
   getProductByIdFromDB,
   getProductsFromDB,
-  searchProductsIntoDB,
   updateProductByIdIntoDB,
 } from './product.service';
 
@@ -33,16 +32,18 @@ export const getAllProducts = async (
 ) => {
   try {
     const { searchTerm } = req.query;
-    let result;
-    let message;
+    const result = await getProductsFromDB(searchTerm as string | undefined);
 
-    if (searchTerm) {
-      result = await searchProductsIntoDB(searchTerm as string);
-      message = `Products matching search term '${searchTerm}' fetched successfully!`;
-    } else {
-      result = await getProductsFromDB();
-      message = 'Products fetched successfully!';
+    if (result.length === 0) {
+      const error = new Error();
+      error.name = 'not-found';
+      error.message = 'No products found!';
+      throw error;
     }
+
+    const message = searchTerm
+      ? `Products matching search term '${searchTerm}' fetched successfully!`
+      : 'Products fetched successfully!';
 
     res.send({
       success: true,

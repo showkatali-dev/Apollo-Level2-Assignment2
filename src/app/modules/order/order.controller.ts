@@ -1,9 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import {
-  createOrderIntoDB,
-  getOrdersByEmailFromDB,
-  getOrdersFromDB,
-} from './order.service';
+import { createOrderIntoDB, getOrdersFromDB } from './order.service';
 import mongoose from 'mongoose';
 
 export const cerateOrder = async (
@@ -33,14 +29,18 @@ export const getAllOrders = async (
 ) => {
   try {
     const { email } = req.query;
-    let result, message;
-    if (email) {
-      result = await getOrdersByEmailFromDB(email as string);
-      message = 'Orders fetched successfully for user email!';
-    } else {
-      result = await getOrdersFromDB();
-      message = 'Orders fetched successfully!';
+    const result = await getOrdersFromDB(email as string | undefined);
+
+    if (result.length === 0) {
+      const error = new Error();
+      error.name = 'not-found';
+      error.message = 'No orders found!';
+      throw error;
     }
+
+    const message = email
+      ? 'Orders fetched successfully for user email!'
+      : 'Orders fetched successfully!';
 
     res.send({
       success: true,
