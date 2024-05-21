@@ -1,8 +1,8 @@
-import { ObjectId } from 'mongoose';
+import mongoose from 'mongoose';
 
 interface IOrder {
   email: string;
-  productId: ObjectId;
+  productId: mongoose.Types.ObjectId;
   price: number;
   quantity: number;
 }

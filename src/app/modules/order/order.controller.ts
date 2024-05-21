@@ -5,6 +5,8 @@ import {
   getProductByIdFromDB,
   updateProductByIdIntoDB,
 } from '../product/product.service';
+import { orderValidationSchema } from './order.validation';
+import { IOrder } from './order.interface';
 
 export const cerateOrder = async (
   req: Request,
@@ -12,8 +14,10 @@ export const cerateOrder = async (
   next: NextFunction,
 ) => {
   try {
-    const req_data = req.body;
-    const { productId: product_id } = req_data;
+    const req_data: IOrder = req.body;
+    const zodParsedData = orderValidationSchema.parse(req_data);
+
+    const { productId: product_id } = zodParsedData;
 
     // check if the product exists
     const product = await getProductByIdFromDB(product_id);
@@ -34,7 +38,7 @@ export const cerateOrder = async (
 
     // create order
     const productId = new mongoose.Types.ObjectId(product_id as string);
-    const result = await createOrderIntoDB({ ...req_data, productId });
+    const result = await createOrderIntoDB({ ...zodParsedData, productId });
 
     // update product inventory after create an order
     await updateProductByIdIntoDB(product_id, {
