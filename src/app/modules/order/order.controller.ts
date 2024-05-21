@@ -46,14 +46,12 @@ export const cerateOrder = async (
     const result = await createOrderIntoDB({ ...zodParsedData, productId });
 
     // update product inventory after create an order
-    await updateProductByIdIntoDB(product_id, {
-      ...product,
-      inventory: {
-        quantity: product.inventory.quantity - zodParsedData.quantity,
-        inStock:
-          product.inventory.quantity > zodParsedData.quantity ? true : false,
-      },
-    });
+    product.inventory = {
+      quantity: product.inventory.quantity - zodParsedData.quantity,
+      inStock:
+        product.inventory.quantity > zodParsedData.quantity ? true : false,
+    };
+    await updateProductByIdIntoDB(product_id, product);
 
     res.send({
       success: true,

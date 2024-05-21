@@ -11,7 +11,12 @@ export const getProductsFromDB = async (searchTerm: string | undefined) => {
   if (searchTerm) {
     const regex = RegExp(searchTerm, 'i');
     const products = await Product.find({
-      $or: [{ name: regex }, { description: regex }, { category: regex }],
+      $or: [
+        { name: regex },
+        { description: regex },
+        { category: regex },
+        { tags: regex },
+      ],
     });
     return products;
   }

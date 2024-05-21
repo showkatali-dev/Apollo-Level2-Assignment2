@@ -38,14 +38,19 @@ export const productValidationSchema = z.object({
   variants: z.array(variantSchema, {
     required_error: 'The product variants are required',
   }),
-  inventory: z.object({
-    quantity: z.number({
-      required_error: 'The product quantity is required',
-      invalid_type_error: 'The product quantity must be a number',
-    }),
-    inStock: z.boolean({
-      required_error: 'The product inStock is required',
-      invalid_type_error: 'The product inStock must be a boolean',
-    }),
-  }),
+  inventory: z.object(
+    {
+      quantity: z.number({
+        required_error: 'The product quantity is required',
+        invalid_type_error: 'The product quantity must be a number',
+      }),
+      inStock: z.boolean({
+        required_error: 'The product inStock is required',
+        invalid_type_error: 'The product inStock must be a boolean',
+      }),
+    },
+    {
+      required_error: 'The product inventory is required',
+    },
+  ),
 });
